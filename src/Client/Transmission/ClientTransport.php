@@ -3,12 +3,12 @@
 namespace TorrentPHP\Client\Transmission;
 
 use TorrentPHP\ClientTransport as ClientTransportInterface,
-    Artax\ClientException as HTTPException,
+    Amp\Artax\ClientException as HTTPException,
     TorrentPHP\ClientException,
     TorrentPHP\Torrent,
-    Artax\Response,
-    Artax\Request,
-    Artax\Client;
+    Amp\Artax\Response,
+    Amp\Artax\Request,
+    Amp\Artax\Client;
 
 /**
  * Class ClientTransport
@@ -62,7 +62,7 @@ class ClientTransport implements ClientTransportInterface
     /**
      * @constructor
      *
-     * @param Client                       $client  Artax HTTP Client
+     * @param Client                       $client  Amp\Artax HTTP Client
      * @param Request                      $request Empty Request object
      * @param ConnectionConfig             $config  Configuration object used to connect over rpc
      */
@@ -201,7 +201,7 @@ class ClientTransport implements ClientTransportInterface
     }
 
     /**
-     * Helper method to facilitate json rpc requests using the Artax client
+     * Helper method to facilitate json rpc requests using the Amp\Artax client
      *
      * @param string $method    The rpc method to call
      * @param array  $arguments Associative array of rpc method arguments to send in the header (not auth arguments)

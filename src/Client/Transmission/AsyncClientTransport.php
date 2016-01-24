@@ -2,14 +2,14 @@
 
 namespace TorrentPHP\Client\Transmission;
 
-use Artax\ClientException as HTTPException,
+use Amp\Artax\ClientException as HTTPException,
     TorrentPHP\Client\AsyncClientFactory,
     TorrentPHP\ClientException,
-    Alert\LibeventReactor,
-    Alert\NativeReactor,
-    Artax\AsyncClient,
-    Artax\Response,
-    Artax\Request;
+    Amp\LibeventReactor,
+    Amp\NativeReactor,
+    Amp\Artax\AsyncClient,
+    Amp\Artax\Response,
+    Amp\Artax\Request;
 
 /**
  * Class AsyncClientTransport
@@ -26,8 +26,8 @@ class AsyncClientTransport extends ClientTransport
     /**
      * @constructor
      *
-     * @param AsyncClientFactory $clientFactory Artax Async HTTP Client
-     * @param Request            $request       Empty Artax Request Object
+     * @param AsyncClientFactory $clientFactory Amp\Artax Async HTTP Client
+     * @param Request            $request       Empty Amp\Artax Request Object
      * @param ConnectionConfig   $config        Configuration object used to connect over rpc
      */
     public function __construct(AsyncClientFactory $clientFactory, Request $request, ConnectionConfig $config)
