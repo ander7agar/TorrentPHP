@@ -7,7 +7,7 @@ use Amp\Artax\ClientException as HTTPException,
     TorrentPHP\ClientException,
     Amp\LibeventReactor,
     Amp\NativeReactor,
-    Amp\Artax\AsyncClient,
+    Amp\Artax\Client,
     Amp\Artax\Response,
     Amp\Artax\Request;
 
@@ -75,7 +75,7 @@ class AsyncClientTransport extends ClientTransport
      */
     protected function performRPCRequest($method, array $arguments, callable $callable)
     {
-        /** @var AsyncClient $client */
+        /** @var Client $client */
         /** @var LibEventReactor|NativeReactor $reactor */
         list ($reactor, $client) = $this->clientFactory->build();
         $request = clone $this->request;
@@ -135,7 +135,10 @@ class AsyncClientTransport extends ClientTransport
                 'id'     => rand()
             )));
 
+            $client->
             $client->request($request, $onResponse, $onError);
+
+
         };
 
         /** Let's do this **/
