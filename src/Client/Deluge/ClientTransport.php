@@ -361,7 +361,7 @@ class ClientTransport implements ClientTransportInterface
 
         /** @var Amp\Artax\Response $response */
         $response = Amp\wait($promise);
-        
+
         if ($response->getStatus() === 200)
         {
             $body = $response->getBody();

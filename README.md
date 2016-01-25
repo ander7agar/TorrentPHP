@@ -1,6 +1,11 @@
 TorrentPHP
 ===
 
+Odie edit: I forked this from j7mbo. The code is 2 years old and I'm trying to get it working again.
+I use Deluge. So Transmission is ignored here. But Deluge is fairly functional.
+
+===
+
 Provides a simple-to-use object oriented interface for interacting with torrent clients. With this library, you can retrieve Torrent data as `Torrent` objects, and otherwise tell your torrent client to perform actions like `pauseTorrent` and `startTorrent`.
 
 Currently supported clients *(with remote capabilities enabled)*:
@@ -42,27 +47,25 @@ Obviously, the first thing after running `composer install` is to include the au
 
     require_once "/path/to/project" . "/vendor/autoload.php";
 
-Create a `ConnectionConfig` object, with the required connection parameters. These differ depending on the client, so check the docblock above the relevant constructor signature. The following examples are using Transmission.
+Create a `ConnectionConfig` object, with the required connection parameters. These differ depending on the client, so check the docblock above the relevant constructor signature. The following examples are using Deluge.
 
-    use TorrentPHP\Client\Transmission\ConnectionConfig;
+    use TorrentPHP\Client\Deluge\ConnectionConfig;
 
     $config = new ConnectionConfig(array(
         'host' => 'localhost',
         'port' => 9091,
-        'username' => 'james',
         'password' => 'password'
     ));
 
 Instead of using cURL to make the RPC requests, we're using [Artax](https://github.com/rdlowrey/Artax). We need a new `Client` object and a new `Request` object.
 
-    $client = new Artax\Client;
-    $config = new Artax\Request;
+    $client = new Amp\Artax\Client;
 
 Now, to give you JSON, use the `ClientTransport` object:
 
-    use TorrentPHP\Client\Transmission\ClientTransport;
+    use TorrentPHP\Client\Deluge\ClientTransport;
 
-    $transport = new ClientTransport($client, $request, $config);
+    $transport = new ClientTransport($client, $config);
 
 Here you can run any of the methods defined in the `ClientTransport` interface, like:
 
@@ -77,7 +80,7 @@ The following methods allow you to pass either a `Torrent` object as the first p
 
 The above methods all return the raw json provided by the client. If you want lovely `Torrent` objects that remain consistent for use around your application, wrap the transport in the relevant `ClientAdapter` before making the exact same call.
 
-    use TorrentPHP\Clent\Trasmission\ClientAdapter,
+    use TorrentPHP\Clent\Deluge\ClientAdapter,
         TorrentPHP\TorrentFactory,
         TorrentPHP\FileFactory;
 
@@ -110,19 +113,15 @@ Code Example
     // Create the HTTP Client Object
     $client = new Artax\Client;
 
-    // Create the HTTP Client Request
-    $request = new Artax\Request;
-
     // Configuration
     $config = new ConnectionConfig(array(
         'host'     => 'localhost', 
-        'port'     => 9091, 
-        'username' => 'james',
+        'port'     => 9091,
         'password' => 'password'
     ));
 
     // Create the transport that returns json
-    $transport = new ClientTransport($client, $request, $config);
+    $transport = new ClientTransport($client, $config);
 
     // Create the adapter that returns Torrent objects
     $adapter = new ClientAdapter($transport, new TorrentFactory, new FileFactory);
@@ -165,7 +164,7 @@ Currently only `getTorrents()` supports asynchronous calls. Here's an example of
     $clientFactory = new TorrentPHP\Client\AsyncClientFactory;
 
     // We need a request object as before
-    $request = new Artax\Request;
+    $request = new Amp\Artax\Request;
 
     // Our connection settings
     $config = new ConnectionConfig([
