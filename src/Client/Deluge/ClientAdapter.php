@@ -2,8 +2,8 @@
 
 namespace TorrentPHP\Client\Deluge;
 
-use TorrentPHP\ClientAdapter as BaseClientAdapter,
-    TorrentPHP\Torrent;
+use TorrentPHP\ClientAdapter as BaseClientAdapter;
+use TorrentPHP\Torrent;
 
 /**
  * Class ClientAdapter
@@ -13,11 +13,31 @@ use TorrentPHP\ClientAdapter as BaseClientAdapter,
 class ClientAdapter extends BaseClientAdapter
 {
     /**
+     * @see ClientTransport::addTorrent()
+     */
+    public function addTorrent($path)
+    {
+        $data = json_decode($this->transport->addTorrent($path));
+
+        $torrentHash = $data->result;
+
+        $torrents = $this->getTorrents($torrentHash);
+
+        return $torrents[0];
+    }
+
+    /**
      * @see ClientTransport::getTorrents()
      */
     public function getTorrents(array $ids = array())
     {
-        $data = json_decode($this->transport->getTorrents($ids), true);
+        $response = $this->transport->getTorrents($ids);
+        if (is_object($response)) {
+            $data = $this->object_to_array($response);
+        } else {
+            $data = json_decode($response, true);
+        }
+
 
         $torrents = array();
 
@@ -56,18 +76,20 @@ class ClientAdapter extends BaseClientAdapter
         return $torrents;
     }
 
-    /**
-     * @see ClientTransport::addTorrent()
+    /***
+     * transform an object into a recursive array
+     * @param $obj
+     * @return array
+     *
      */
-    public function addTorrent($path)
+    private function object_to_array($obj)
     {
-        $data = json_decode($this->transport->addTorrent($path));
-
-        $torrentHash = $data->result;
-
-        $torrents = $this->getTorrents($torrentHash);
-
-        return $torrents[0];
+        $_arr = is_object($obj) ? get_object_vars($obj) : $obj;
+        foreach ($_arr as $key => $val) {
+            $val = (is_array($val) || is_object($val)) ? $this->object_to_array($val) : $val;
+            $arr[$key] = $val;
+        }
+        return $arr;
     }
 
     /**

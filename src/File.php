@@ -22,6 +22,29 @@ class File
     private $name = '';
 
     /**
+     * @constructor
+     *
+     * @param string $name        The name of the file
+     * @param int    $sizeInBytes The size of the file
+     *
+     * @throws \InvalidArgumentException When an invalid size given
+     */
+    public function __construct($name, $sizeInBytes)
+    {
+        if (is_numeric($sizeInBytes) && $sizeInBytes > -1)
+        {
+            $this->name = $name;
+            $this->size = $sizeInBytes;
+        }
+        else
+        {
+            throw new \InvalidArgumentException(
+                sprintf('Invalid file size provided. Size should be bigger than "-1" but "%s" given', $sizeInBytes ?: 'null')
+            );
+        }
+    }
+
+    /**
      * Get file name
      *
      * @return string The file name
@@ -39,28 +62,5 @@ class File
     public function getSize()
     {
         return $this->size;
-    }
-
-    /**
-     * @constructor
-     *
-     * @param string $name        The name of the file
-     * @param int    $sizeInBytes The size of the file
-     *
-     * @throws \InvalidArgumentException When an invalid size given
-     */
-    public function __construct($name, $sizeInBytes)
-    {
-        if (is_int($sizeInBytes) && $sizeInBytes > -1)
-        {
-            $this->name = $name;
-            $this->size = $sizeInBytes;
-        }
-        else
-        {
-            throw new \InvalidArgumentException(
-                'Invalid file size provided. Size should be bigger than "-1" but "%s" given', $sizeInBytes
-            );
-        }
     }
 } 
