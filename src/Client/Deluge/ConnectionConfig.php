@@ -10,7 +10,7 @@ namespace TorrentPHP\Client\Deluge;
 class ConnectionConfig
 {
     /**
-     * @var string Example 'http://localhost' or 'localhost'
+     * @var string Example 'https://localhost' or 'localhost'
      */
     private $host;
 
@@ -27,19 +27,6 @@ class ConnectionConfig
     private $password;
 
     /**
-     * @return array The configuration args as keys and values
-     */
-    public function getArgs()
-    {
-        return array(
-            'host' => $this->host,
-            'port' => $this->port,
-            'username' => $this->username,
-            'password' => $this->password
-        );
-    }
-
-    /**
      * @constructor
      *
      * Set the connection arguments - required are host, port and password
@@ -54,7 +41,10 @@ class ConnectionConfig
 
         if (count(array_intersect_key(array_flip($required), $arguments)) === count($required))
         {
-            $this->host = 'http://' . str_replace('http', '', $arguments['host']);
+            /***
+             * TODO: Add detection or option to set http https or just host here, for now default to https
+             */
+            $this->host = 'https://' . str_replace('http', '', $arguments['host']);
             $this->port = $arguments['port'];
             $this->username = $arguments['username'];
             $this->password = $arguments['password'];
@@ -66,5 +56,18 @@ class ConnectionConfig
                 print_r($required, true), print_r(array_keys($arguments), true)
             ));
         }
+    }
+
+    /**
+     * @return array The configuration args as keys and values
+     */
+    public function getArgs()
+    {
+        return array(
+            'host' => $this->host,
+            'port' => $this->port,
+            'username' => $this->username,
+            'password' => $this->password
+        );
     }
 } 

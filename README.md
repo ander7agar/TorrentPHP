@@ -1,9 +1,24 @@
 TorrentPHP
 ===
+*primary dev work is currently on Deluge*
 
-Odie edit: I forked this from j7mbo. The code is 2 years old and I'm trying to get it working again.
-I use Deluge. So Transmission is ignored here. But Deluge is fairly functional.
+Changelog
+===
+ - Upgraded to work in php 7 
+ - Numerous fixes with integer handling , mostly changing how integer detection is handled
+ - Added support for https host connections
+ - Resolved issues with percentage complete calculations causing negative values when dealing with large file sizes
+ - Fixed issues with invalid InvalidArgumentException parameters causing application to crash
+ - Resolved comparability with artax returning stdObj causing failures when trying to iterate over the results
+ 
 
+TODO
+===
+- Add additional detection for http and https connection strings
+- Work on transmission support (maybe someone can help? I don't have access to transmission)
+- Add support for ruTorrent xmlrpc transport
+
+About
 ===
 
 Provides a simple-to-use object oriented interface for interacting with torrent clients. With this library, you can retrieve Torrent data as `Torrent` objects, and otherwise tell your torrent client to perform actions like `pauseTorrent` and `startTorrent`.
@@ -54,6 +69,7 @@ Create a `ConnectionConfig` object, with the required connection parameters. The
     $config = new ConnectionConfig(array(
         'host' => 'localhost',
         'port' => 9091,
+        'username' => 'username',
         'password' => 'password'
     ));
 
@@ -117,6 +133,7 @@ Code Example
     $config = new ConnectionConfig(array(
         'host'     => 'localhost', 
         'port'     => 9091,
+        'username' => 'username',
         'password' => 'password'
     ));
 
@@ -170,6 +187,7 @@ Currently only `getTorrents()` supports asynchronous calls. Here's an example of
     $config = new ConnectionConfig([
         'host'     => 'localhost',
         'port'     => 8112,
+        'username' => 'username',
         'password' => 'deluge'
     ]);
 

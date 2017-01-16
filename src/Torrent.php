@@ -133,27 +133,6 @@ class Torrent
     }
 
     /**
-     * Set the torrent size in bytes
-     *
-     * @param int $bytes The size of the torrent in bytes
-     *
-     * @throws \InvalidArgumentException When an invalid size given
-     */
-    public function setSize($bytes)
-    {
-        if (is_int($bytes) && $bytes > -1)
-        {
-            $this->size = $bytes;
-        }
-        else
-        {
-            throw new \InvalidArgumentException(
-                'Invalid torrent size provided. Size should be bigger than "-1" but "%s" given', $bytes
-            );
-        }
-    }
-
-    /**
      * Get torrent size
      *
      * @return int The torrent size in bytes
@@ -164,13 +143,27 @@ class Torrent
     }
 
     /**
-     * Set the torrent status
+     * Set the torrent size in bytes
      *
-     * @param string $status The status of the torrent
+     * @param int $bytes The size of the torrent in bytes
+     *
+     * @throws \InvalidArgumentException When an invalid size given
      */
-    public function setStatus($status)
+    public function setSize($bytes)
     {
-        $this->status = $status;
+
+        if (is_numeric($bytes) && $bytes > -1)
+        {
+            $this->size = $bytes;
+        }
+        else
+        {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Invalid torrent size provided. Size should be bigger than "-1" but "%s" given', $bytes ?: 'null'
+                )
+            );
+        }
     }
 
     /**
@@ -184,13 +177,13 @@ class Torrent
     }
 
     /**
-     * Set error string
+     * Set the torrent status
      *
-     * @param string $errorString
+     * @param string $status The status of the torrent
      */
-    public function setErrorString($errorString)
+    public function setStatus($status)
     {
-        $this->errorString = $errorString;
+        $this->status = $status;
     }
 
     /**
@@ -201,6 +194,26 @@ class Torrent
     public function getErrorString()
     {
         return $this->errorString;
+    }
+
+    /**
+     * Set error string
+     *
+     * @param string $errorString
+     */
+    public function setErrorString($errorString)
+    {
+        $this->errorString = $errorString;
+    }
+
+    /**
+     * Get download speed in bytes per second
+     *
+     * @return int
+     */
+    public function getDownloadSpeed()
+    {
+        return $this->downloadSpeed;
     }
 
     /**
@@ -230,9 +243,9 @@ class Torrent
      *
      * @return int
      */
-    public function getDownloadSpeed()
+    public function getUploadSpeed()
     {
-        return $this->downloadSpeed;
+        return $this->uploadSpeed;
     }
 
     /**
@@ -258,13 +271,13 @@ class Torrent
     }
 
     /**
-     * Get download speed in bytes per second
+     * Get number of bytes downloaded
      *
      * @return int
      */
-    public function getUploadSpeed()
+    public function getBytesDownloaded()
     {
-        return $this->uploadSpeed;
+        return $this->bytesDownloaded;
     }
 
     /**
@@ -278,7 +291,7 @@ class Torrent
      */
     public function setBytesDownloaded($numBytes)
     {
-        if (is_int($numBytes) && $numBytes > -1)
+        if (is_numeric($numBytes) && $numBytes > -1)
         {
             $this->bytesDownloaded = $numBytes;
 
@@ -314,13 +327,13 @@ class Torrent
     }
 
     /**
-     * Get number of bytes downloaded
+     * Get number of bytes uploaded
      *
      * @return int
      */
-    public function getBytesDownloaded()
+    public function getBytesUploaded()
     {
-        return $this->bytesDownloaded;
+        return $this->bytesUploaded;
     }
 
     /**
@@ -359,16 +372,6 @@ class Torrent
                 $numBytes
             ));
         }
-    }
-
-    /**
-     * Get number of bytes uploaded
-     *
-     * @return int
-     */
-    public function getBytesUploaded()
-    {
-        return $this->bytesUploaded;
     }
 
     /**
