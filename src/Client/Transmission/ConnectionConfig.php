@@ -57,8 +57,13 @@ class ConnectionConfig
 
         if (count(array_intersect_key(array_flip($required), $arguments)) === count($required))
         {
-            $this->host = 'http://' . str_replace('http', '', $arguments['host']);
-            $this->port = $arguments['port'];
+            $host = strtolower($arguments['host']);
+
+            if (strpos($host, 'http') === false) {
+                $host = 'http://' . $host;
+            }
+
+            $this->port = $host;
             $this->username = $arguments['username'];
             $this->password = $arguments['password'];
         }

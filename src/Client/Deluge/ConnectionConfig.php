@@ -41,10 +41,13 @@ class ConnectionConfig
 
         if (count(array_intersect_key(array_flip($required), $arguments)) === count($required))
         {
-            /***
-             * TODO: Add detection or option to set http https or just host here, for now default to https
-             */
-            $this->host = 'https://' . str_replace('http', '', $arguments['host']);
+            $host = strtolower($arguments['host']);
+
+            if (strpos($host, 'http') === false) {
+                $host = 'http://' . $host;
+            }
+
+            $this->host = $host;
             $this->port = $arguments['port'];
             $this->username = $arguments['username'];
             $this->password = $arguments['password'];
