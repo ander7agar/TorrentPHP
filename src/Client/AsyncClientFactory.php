@@ -2,6 +2,7 @@
 
 namespace TorrentPHP\Client;
 
+use Amp\Artax\Client;
 use Amp\Reactor;
 
 /**
@@ -19,6 +20,6 @@ class AsyncClientFactory
     public function build()
     {
         $reactor = reactor();
-        return array($reactor, new Client($reactor));
+        return array($reactor, new Client());
     }
 } 

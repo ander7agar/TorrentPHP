@@ -17,24 +17,11 @@ class ClientAdapter extends BaseClientAdapter
     /**
      * @see ClientTransport::getTorrents()
      */
-    public function getTorrents(array $ids = array(), callable $callable = null)
+    public function getTorrents(array $ids = array())
     {
-        if ($callable === null)
-        {
-            $data = $this->transport->getTorrents($ids);
+        $data = $this->transport->getTorrents($ids);
 
-            return $this->convertJsonToTorrentObjects($data);
-        }
-        else
-        {
-            $jsonToTorrents = function($jsonResponse) use ($callable) {
-                $callable($this->convertJsonToTorrentObjects($jsonResponse));
-            };
-
-            $this->transport->getTorrents($ids, $jsonToTorrents);
-
-            return true;
-        }
+        return $this->convertJsonToTorrentObjects($data);
     }
 
     /**

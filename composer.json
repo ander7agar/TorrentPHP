@@ -1,9 +1,9 @@
 {
-    "name": "j7mbo/torrent-php",
+    "name": "gotcreations/torrent-php",
     "type": "library",
     "description": "Library for talking to various torrent clients with PHP",
     "keywords": ["torrent","php"],
-    "homepage": "http://github.com/j7mbo/TorrentPHP",
+    "homepage": "http://github.com/ander7agar/TorrentPHP",
     "license": "DBAD",
     "authors": [
         {
@@ -11,6 +11,12 @@
             "email": "me@j7mbo.co.uk",
             "homepage": "http://j7mbo.co.uk",
             "role": "Author, Developer"
+        },
+        {
+            "name": "Andersson G. Acosta",
+            "email": "ander7agar@gmail.com",
+            "homepage": "https://github.com/ander7agar",
+            "role": "Developer"
         }
     ],
     "require": {

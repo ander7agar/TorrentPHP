@@ -36,7 +36,7 @@ interface ClientTransport
      *
      * @return string A JSON string of response data
      */
-    public function addTorrentUrl($path);
+    public function addTorrent($path);
 
     public function addTorrentMagnet($url);
 

@@ -9,16 +9,16 @@
     "packages": [
         {
             "name": "amphp/amp",
-            "version": "v1.0.7",
+            "version": "v1.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/amp.git",
-                "reference": "5341a4cb92ce9a8e1b44816a391f95dd5b5b2197"
+                "reference": "4f2161da5f68f274f116985635aea63b5c0f54d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/amp/zipball/5341a4cb92ce9a8e1b44816a391f95dd5b5b2197",
-                "reference": "5341a4cb92ce9a8e1b44816a391f95dd5b5b2197",
+                "url": "https://api.github.com/repos/amphp/amp/zipball/4f2161da5f68f274f116985635aea63b5c0f54d2",
+                "reference": "4f2161da5f68f274f116985635aea63b5c0f54d2",
                 "shasum": ""
             },
             "require": {
@@ -62,7 +62,7 @@
                 "non-blocking",
                 "promise"
             ],
-            "time": "2016-01-09 14:19:56"
+            "time": "2016-05-12 12:54:59"
         },
         {
             "name": "amphp/artax",
@@ -70,12 +70,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/artax.git",
-                "reference": "1dab13194aa57f1f9b71ed39ceabdbba0041fdb5"
+                "reference": "99b72e4523c6e1e27d39de3a8b422767bcaa48ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/artax/zipball/1dab13194aa57f1f9b71ed39ceabdbba0041fdb5",
-                "reference": "1dab13194aa57f1f9b71ed39ceabdbba0041fdb5",
+                "url": "https://api.github.com/repos/amphp/artax/zipball/99b72e4523c6e1e27d39de3a8b422767bcaa48ea",
+                "reference": "99b72e4523c6e1e27d39de3a8b422767bcaa48ea",
                 "shasum": ""
             },
             "require": {
@@ -84,7 +84,7 @@
                 "php": ">=5.5.0"
             },
             "require-dev": {
-                "fabpot/php-cs-fixer": "~1.9",
+                "friendsofphp/php-cs-fixer": "~1.9",
                 "phpunit/phpunit": "~4.8"
             },
             "type": "library",
@@ -120,7 +120,7 @@
                 "parallel",
                 "rest"
             ],
-            "time": "2016-01-23 18:35:00"
+            "time": "2016-11-27 17:09:01"
         },
         {
             "name": "amphp/cache",
@@ -172,28 +172,29 @@
         },
         {
             "name": "amphp/dns",
-            "version": "v0.8.5",
+            "version": "v0.8.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/dns.git",
-                "reference": "2f8103f1738fe48553b80733076c987234d8f49e"
+                "reference": "0b0ef2b82d7307d57e624042aac8862f5115ad12"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/dns/zipball/2f8103f1738fe48553b80733076c987234d8f49e",
-                "reference": "2f8103f1738fe48553b80733076c987234d8f49e",
+                "url": "https://api.github.com/repos/amphp/dns/zipball/0b0ef2b82d7307d57e624042aac8862f5115ad12",
+                "reference": "0b0ef2b82d7307d57e624042aac8862f5115ad12",
                 "shasum": ""
             },
             "require": {
                 "amphp/amp": "^1",
                 "amphp/cache": "^0.1",
                 "amphp/file": "^0.1",
+                "amphp/windows-registry": "^0.2.2",
                 "daverandom/libdns": "^1",
                 "php": ">=5.5"
             },
             "require-dev": {
-                "fabpot/php-cs-fixer": "^1.9",
-                "phpunit/phpunit": "^4.8"
+                "friendsofphp/php-cs-fixer": "^1.9",
+                "phpunit/phpunit": "^4.8|^5.1.3"
             },
             "type": "library",
             "autoload": {
@@ -236,20 +237,20 @@
                 "dns",
                 "resolve"
             ],
-            "time": "2015-12-23 13:56:14"
+            "time": "2017-01-05 00:13:28"
         },
         {
             "name": "amphp/file",
-            "version": "v0.1.0",
+            "version": "v0.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/file.git",
-                "reference": "ef27c46ac8c6d06df371efc64bcf271189c048a6"
+                "reference": "6612ae6757d4719492ed8b34ea6181ff67cfbed1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/file/zipball/ef27c46ac8c6d06df371efc64bcf271189c048a6",
-                "reference": "ef27c46ac8c6d06df371efc64bcf271189c048a6",
+                "url": "https://api.github.com/repos/amphp/file/zipball/6612ae6757d4719492ed8b34ea6181ff67cfbed1",
+                "reference": "6612ae6757d4719492ed8b34ea6181ff67cfbed1",
                 "shasum": ""
             },
             "require": {
@@ -257,13 +258,14 @@
                 "php": ">=5.5"
             },
             "require-dev": {
-                "fabpot/php-cs-fixer": "~1.9",
+                "friendsofphp/php-cs-fixer": "~1.9",
                 "phpunit/phpunit": "~4.8"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "0.1.0-dev"
+                    "dev-master": "0.1.0-dev",
+                    "dev-amp_v2": "0.2.0-dev"
                 }
             },
             "autoload": {
@@ -295,25 +297,68 @@
                 "non-blocking",
                 "static"
             ],
-            "time": "2015-09-10 22:40:33"
+            "time": "2016-10-01 17:43:52"
         },
         {
-            "name": "amphp/socket",
-            "version": "v0.9.3",
+            "name": "amphp/process",
+            "version": "v0.1.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/amphp/socket.git",
-                "reference": "5d67dbffbf940f6c5feb4b30c69951037ec2a49e"
+                "url": "https://github.com/amphp/process.git",
+                "reference": "f22cca2af36e442b771c0de2e24e8025550d8ffc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/socket/zipball/5d67dbffbf940f6c5feb4b30c69951037ec2a49e",
-                "reference": "5d67dbffbf940f6c5feb4b30c69951037ec2a49e",
+                "url": "https://api.github.com/repos/amphp/process/zipball/f22cca2af36e442b771c0de2e24e8025550d8ffc",
+                "reference": "f22cca2af36e442b771c0de2e24e8025550d8ffc",
+                "shasum": ""
+            },
+            "require": {
+                "amphp/amp": "^1"
+            },
+            "require-dev": {
+                "fabpot/php-cs-fixer": "~1.9",
+                "phpunit/phpunit": "^4.8"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    {
+                        "Amp\\Process": "Process.php"
+                    }
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bob Weinand",
+                    "email": "bobwei9@hotmail.com"
+                }
+            ],
+            "description": "Asynchronous process manager",
+            "homepage": "https://github.com/amphp/process",
+            "time": "2016-09-24 10:49:26"
+        },
+        {
+            "name": "amphp/socket",
+            "version": "v0.9.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/amphp/socket.git",
+                "reference": "722614608c1de7099661187fad4e15c876816db1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/amphp/socket/zipball/722614608c1de7099661187fad4e15c876816db1",
+                "reference": "722614608c1de7099661187fad4e15c876816db1",
                 "shasum": ""
             },
             "require": {
                 "amphp/amp": "^1",
-                "amphp/dns": "~0.8.0",
+                "amphp/dns": "^0.8",
                 "php": ">=5.5"
             },
             "require-dev": {
@@ -350,20 +395,58 @@
                 "tcp",
                 "tls"
             ],
-            "time": "2015-10-18 20:49:56"
+            "time": "2016-07-18 22:03:24"
         },
         {
-            "name": "daverandom/libdns",
-            "version": "v1.0.1",
+            "name": "amphp/windows-registry",
+            "version": "v0.2.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/DaveRandom/LibDNS.git",
-                "reference": "e935e8caa5ff30122bcbeb8b4ce567fa14cdf063"
+                "url": "https://github.com/amphp/windows-registry.git",
+                "reference": "e4420eb368008c8fe81c0b481506306272cc3d21"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DaveRandom/LibDNS/zipball/e935e8caa5ff30122bcbeb8b4ce567fa14cdf063",
-                "reference": "e935e8caa5ff30122bcbeb8b4ce567fa14cdf063",
+                "url": "https://api.github.com/repos/amphp/windows-registry/zipball/e4420eb368008c8fe81c0b481506306272cc3d21",
+                "reference": "e4420eb368008c8fe81c0b481506306272cc3d21",
+                "shasum": ""
+            },
+            "require": {
+                "amphp/amp": "^1.2",
+                "amphp/process": "^0.1.3",
+                "php": ">=5.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Amp\\WindowsRegistry\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Niklas Keller",
+                    "email": "me@kelunik.com"
+                }
+            ],
+            "description": "Windows Registry Reader.",
+            "time": "2017-01-04 23:52:31"
+        },
+        {
+            "name": "daverandom/libdns",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DaveRandom/LibDNS.git",
+                "reference": "67de5497e84d179dffc089c5eb6a1945eb4e9460"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DaveRandom/LibDNS/zipball/67de5497e84d179dffc089c5eb6a1945eb4e9460",
+                "reference": "67de5497e84d179dffc089c5eb6a1945eb4e9460",
                 "shasum": ""
             },
             "require": {
@@ -383,7 +466,7 @@
             "keywords": [
                 "dns"
             ],
-            "time": "2015-04-02 15:42:15"
+            "time": "2016-04-29 20:47:45"
         }
     ],
     "packages-dev": [
@@ -450,16 +533,16 @@
         },
         {
             "name": "phpunit/php-file-iterator",
-            "version": "1.4.1",
+            "version": "1.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-file-iterator.git",
-                "reference": "6150bf2c35d3fc379e50c7602b75caceaa39dbf0"
+                "reference": "3cc8f69b3028d0f96a9078e6295d86e9bf019be5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-file-iterator/zipball/6150bf2c35d3fc379e50c7602b75caceaa39dbf0",
-                "reference": "6150bf2c35d3fc379e50c7602b75caceaa39dbf0",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-file-iterator/zipball/3cc8f69b3028d0f96a9078e6295d86e9bf019be5",
+                "reference": "3cc8f69b3028d0f96a9078e6295d86e9bf019be5",
                 "shasum": ""
             },
             "require": {
@@ -493,7 +576,7 @@
                 "filesystem",
                 "iterator"
             ],
-            "time": "2015-06-21 13:08:43"
+            "time": "2016-10-03 07:40:28"
         },
         {
             "name": "phpunit/php-text-template",
@@ -538,20 +621,23 @@
         },
         {
             "name": "phpunit/php-timer",
-            "version": "1.0.7",
+            "version": "1.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-timer.git",
-                "reference": "3e82f4e9fc92665fafd9157568e4dcb01d014e5b"
+                "reference": "38e9124049cf1a164f1e4537caf19c99bf1eb260"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-timer/zipball/3e82f4e9fc92665fafd9157568e4dcb01d014e5b",
-                "reference": "3e82f4e9fc92665fafd9157568e4dcb01d014e5b",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-timer/zipball/38e9124049cf1a164f1e4537caf19c99bf1eb260",
+                "reference": "38e9124049cf1a164f1e4537caf19c99bf1eb260",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4|~5"
             },
             "type": "library",
             "autoload": {
@@ -575,7 +661,7 @@
             "keywords": [
                 "timer"
             ],
-            "time": "2015-06-21 08:01:12"
+            "time": "2016-05-12 18:03:57"
         },
         {
             "name": "phpunit/php-token-stream",
@@ -751,16 +837,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.2",
+            "version": "v2.8.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "34c8a4b51e751e7ea869b8262f883d008a2b81b8"
+                "reference": "dbe61fed9cd4a44c5b1d14e5e7b1a8640cfb2bf2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/34c8a4b51e751e7ea869b8262f883d008a2b81b8",
-                "reference": "34c8a4b51e751e7ea869b8262f883d008a2b81b8",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/dbe61fed9cd4a44c5b1d14e5e7b1a8640cfb2bf2",
+                "reference": "dbe61fed9cd4a44c5b1d14e5e7b1a8640cfb2bf2",
                 "shasum": ""
             },
             "require": {
@@ -796,7 +882,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-01-13 10:28:07"
+            "time": "2017-01-03 13:49:52"
         }
     ],
     "aliases": [],

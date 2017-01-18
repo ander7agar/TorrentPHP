@@ -2,14 +2,14 @@
 
 namespace TorrentPHP\Client\Deluge;
 
-use TorrentPHP\ClientTransport as ClientTransportInterface,
-    Amp\Artax\ClientException as HTTPException,
-    TorrentPHP\ClientException,
-    TorrentPHP\Torrent,
-    Amp\Artax\Response,
-    Amp\Artax\Request,
-    Amp\Artax\Client,
-    Amp;
+use TorrentPHP\ClientTransport as ClientTransportInterface;
+use Amp\Artax\ClientException as HTTPException;
+use TorrentPHP\ClientException;
+use TorrentPHP\Torrent;
+use Amp\Artax\Response;
+use Amp\Artax\Request;
+use Amp\Artax\Client;
+use Amp;
 
 /**
  * Class ClientTransport
@@ -140,7 +140,7 @@ class ClientTransport implements ClientTransportInterface
     /**
      * {@inheritdoc}
      */
-    public function addTorrentUrl($path)
+    public function addTorrent($path)
     {
         $method = self::METHOD_ADD_URL;
         $params = array(
@@ -183,7 +183,7 @@ class ClientTransport implements ClientTransportInterface
         $method = self::METHOD_ADD_MAGNET;
         $params = array(
             /** Torrent Url **/
-            $url,
+            $filePath,
             /** Required array of optional arguments (required and also optional? wtf was the api designer thinking) **/
             array("add_paused" => false)
         );

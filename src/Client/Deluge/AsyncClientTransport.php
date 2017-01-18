@@ -2,14 +2,14 @@
 
 namespace TorrentPHP\Client\Deluge;
 
-use Amp\Artax\ClientException as HTTPException,
-    TorrentPHP\Client\AsyncClientFactory,
-    TorrentPHP\ClientException,
-    Amp\LibeventReactor,
-    Amp\NativeReactor,
-    Amp\Artax\Client,
-    Amp\Artax\Response,
-    Amp\Artax\Request;
+use Amp\Artax\ClientException as HTTPException;
+use TorrentPHP\Client\AsyncClientFactory;
+use TorrentPHP\ClientException;
+use Amp\LibeventReactor;
+use Amp\NativeReactor;
+use Amp\Artax\Client;
+use Amp\Artax\Response;
+use Amp\Artax\Request;
 
 /**
  * Class AsyncClientTransport
@@ -30,9 +30,8 @@ class AsyncClientTransport extends ClientTransport
      * @param Request            $request       Empty Amp\Artax Request Object
      * @param ConnectionConfig   $config        Configuration object used to connect over rpc
      */
-    public function __construct(AsyncClientFactory $clientFactory, Request $request, ConnectionConfig $config)
-    {
-        $this->connectionArgs = $config->getArgs();
+    public function __construct(AsyncClientFactory $clientFactory, Request $request, ConnectionConfig $config) {
+        parent::__construct($clientFactory->build()[1], $config);
         $this->clientFactory  = $clientFactory;
         $this->request        = $request;
     }
@@ -135,10 +134,14 @@ class AsyncClientTransport extends ClientTransport
                 'id'     => rand()
             )));
 
-            $client->
-            $client->request($request, $onResponse, $onError);
+            try {
+                $promise = $client->request($request);
+                $response = \Amp\wait($promise);
 
-
+                $onResponse($response);
+            } catch (\Exception $e) {
+                $onError($e);
+            }
         };
 
         /** Let's do this **/
@@ -157,7 +160,15 @@ class AsyncClientTransport extends ClientTransport
                 'id'     => rand()
             )));
 
-            $client->request($request, $onAuthResponse, $onError);
+            try {
+                $promise = $client->request($request);
+                $response = \Amp\wait($promise);
+
+                $onAuthResponse($response, $request);
+            } catch (\Exception $e) {
+                $onError($e);
+            }
+
         });
 
         $reactor->run();

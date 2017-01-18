@@ -2,13 +2,14 @@
 
 namespace TorrentPHP\Client\Transmission;
 
-use TorrentPHP\ClientTransport as ClientTransportInterface,
-    Amp\Artax\ClientException as HTTPException,
-    TorrentPHP\ClientException,
-    TorrentPHP\Torrent,
-    Amp\Artax\Response,
-    Amp\Artax\Request,
-    Amp\Artax\Client;
+use TorrentPHP\ClientTransport as ClientTransportInterface;
+use Amp\Artax\ClientException as HTTPException;
+use TorrentPHP\ClientException;
+use TorrentPHP\Torrent;
+use Amp\Artax\Response;
+use Amp\Artax\Request;
+use Amp\Artax\Client;
+use Amp;
 
 /**
  * Class ClientTransport
@@ -231,11 +232,14 @@ class ClientTransport implements ClientTransportInterface
             ))
         ));
 
-        $response = $client->request($request);
+        $promise = $client->request($request);
+
+        /** @var Response $response */
+        $response = Amp\wait($promise);
 
         if ($response->hasHeader('X-Transmission-Session-Id'))
         {
-            $sessionId = $client->request($request)->getHeader('X-Transmission-Session-Id');
+            $sessionId = $response->getHeader('X-Transmission-Session-Id');
 
             $request->setMethod('POST');
             $request->setHeader('X-Transmission-Session-Id', $sessionId);
@@ -247,7 +251,10 @@ class ClientTransport implements ClientTransportInterface
                 )
             )));
 
-            $response = $client->request($request);
+            $promise = $client->request($request);
+
+            /** @var Response $response */
+            $response = Amp\wait($promise);
 
             if ($response->getStatus() === 200)
             {
@@ -282,5 +289,10 @@ class ClientTransport implements ClientTransportInterface
         {
             throw new HTTPException("Response from torrent client did not return an X-Transmission-Session-Id header");
         }
+    }
+
+    public function addTorrentMagnet($url)
+    {
+        throw new HttpException('Unsupported operation');
     }
 }
