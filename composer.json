@@ -1,5 +1,5 @@
 {
-    "name": "gotcreations/torrent-php",
+    "name": "gotcreations/client-torrent-bundle",
     "type": "library",
     "description": "Library for talking to various torrent clients with PHP",
     "keywords": ["torrent","php"],
