@@ -293,7 +293,7 @@ class ClientTransport implements ClientTransportInterface
         }
         catch(HTTPException $e)
         {
-            throw new ClientException($e->getMessage());
+            throw new ClientException($e->getMessage(), null, $e);
         }
     }
 
