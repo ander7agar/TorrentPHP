@@ -310,14 +310,11 @@ class ClientTransport implements ClientTransportInterface
     protected function performRPCRequest($method, array $arguments, callable $callable = null)
     {
         /** @var Client $client */
-        /** @var LibEventReactor|NativeReactor $reactor */
         $client = $this->client;
-        $reactor = Amp\reactor();
-
         $request = new Request();
 
         /** Callback for response data from client **/
-        $onResponse = function(Response $response) use ($reactor, $method, $callable) {
+        $onResponse = function(Response $response) use ($method, $callable) {
 
             $isJson = function() use ($response) {
                 json_decode($response->getBody());
@@ -326,15 +323,12 @@ class ClientTransport implements ClientTransportInterface
 
             if ($response->getStatus() !== 200 || !$isJson())
             {
-                $reactor->stop();
 
                 throw new HTTPException(sprintf(
                     'Did not get back a JSON response body, got "%s" instead',
                     $method, print_r($response->getBody(), true)
                 ));
             }
-
-            $reactor->stop();
 
             if ($callable != null) {
                 $callable($response->getBody());
@@ -343,27 +337,13 @@ class ClientTransport implements ClientTransportInterface
         };
 
         /** Callback on error for either auth response or response **/
-        $onError = function(\Exception $e) use($reactor) {
-
-            $reactor->stop();
+        $onError = function(\Exception $e) {
 
             throw new HTTPException("Something went wrong..." . $e->getMessage());
         };
 
         /** Callback when auth response is returned **/
-        $onAuthResponse = function(Response $response, Request $request) use ($reactor, $client, $onResponse, $onError, $method, $arguments) {
-
-            /*            if (!$response->hasHeader('Set-Cookie'))
-                        {
-                            $reactor->stop();
-
-                            throw new HTTPException("Response from torrent client did not return an Set-Cookie header");
-                        }
-
-                        $response = $response->getHeader('Set-Cookie');*/
-
-            //preg_match_all('#_session_id=(.*?);#', $response[0], $matches);
-            //$cookie = isset($matches[0][0]) ? $matches[0][0]: '';
+        $onAuthResponse = function(Response $response, Request $request) use ($client, $onResponse, $onError, $method, $arguments) {
 
             $request = clone $request;
             $request->setMethod('POST');
@@ -384,33 +364,26 @@ class ClientTransport implements ClientTransportInterface
             }
         };
 
-        /** Let's do this **/
-        $reactor->immediately(function() use ($reactor, $client, $request, $onAuthResponse, $onError) {
+        $request->setUri(sprintf('%s:%s/json', $this->connectionArgs['host'], $this->connectionArgs['port']));
+        $request->setMethod('POST');
+        $request->setAllHeaders(array(
+            'Content-Type'  => 'application/json; charset=utf-8'
+        ));
+        $request->setBody(json_encode(array(
+            'method' => self::METHOD_AUTH,
+            'params' => array(
+                $this->connectionArgs['password']
+            ),
+            'id'     => rand()
+        )));
 
-            $request->setUri(sprintf('%s:%s/json', $this->connectionArgs['host'], $this->connectionArgs['port']));
-            $request->setMethod('POST');
-            $request->setAllHeaders(array(
-                'Content-Type'  => 'application/json; charset=utf-8'
-            ));
-            $request->setBody(json_encode(array(
-                'method' => self::METHOD_AUTH,
-                'params' => array(
-                    $this->connectionArgs['password']
-                ),
-                'id'     => rand()
-            )));
+        try {
+            $promise = $client->request($request);
+            $response = \Amp\wait($promise);
 
-            try {
-                $promise = $client->request($request);
-                $response = \Amp\wait($promise);
-
-                $onAuthResponse($response, $request);
-            } catch (\Exception $e) {
-                $onError($e);
-            }
-
-        });
-
-        $reactor->run();
+            $onAuthResponse($response, $request);
+        } catch (\Exception $e) {
+            $onError($e);
+        }
     }
 }
