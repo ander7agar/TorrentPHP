@@ -2,6 +2,8 @@
 
 namespace TorrentPHP\Client\Deluge;
 
+use Amp\LibeventReactor;
+use Amp\NativeReactor;
 use TorrentPHP\ClientTransport as ClientTransportInterface;
 use Amp\Artax\ClientException as HTTPException;
 use TorrentPHP\ClientException;
@@ -106,7 +108,7 @@ class ClientTransport implements ClientTransportInterface
     /**
      * {@inheritdoc}
      */
-    public function getTorrents(array $ids = array())
+    public function getTorrents(array $ids = array(), callable $callable = null)
     {
         $method = self::METHOD_GET_ALL;
 
@@ -120,7 +122,7 @@ class ClientTransport implements ClientTransportInterface
             )
         );
 
-        return $this->tryRPCRequest($method, $params);
+        return $this->tryRPCRequest($method, $params, $callable);
     }
 
     public function getWebUI()
@@ -279,14 +281,15 @@ class ClientTransport implements ClientTransportInterface
      *
      * @param string $method The rpc method to call
      * @param array $params Associative array of rpc method arguments to send in the header (not auth arguments)
+     * @param callable $callable
      * @return ResponseBody The decoded return data that came back from Deluge
      *
      * @throws ClientException
      */
-    private function tryRPCRequest($method, $params) {
+    private function tryRPCRequest($method, $params, callable $callable = null) {
         try
         {
-            return new ResponseBody($this->performRPCRequest($method, $params)->getBody());
+            return new ResponseBody($this->performRPCRequest($method, $params, $callable)->getBody());
         }
         catch(HTTPException $e)
         {
@@ -297,98 +300,115 @@ class ClientTransport implements ClientTransportInterface
     /**
      * Helper method to facilitate json rpc requests using the Amp\Artax client
      *
-     * @param string $method    The rpc method to call
-     * @param array  $params Associative array of rpc method arguments to send in the header (not auth arguments)
+     * @param string $method The rpc method to call
+     * @param array $arguments Associative array of rpc method arguments to send in the header (not auth arguments)
      *
-     * @throws HTTPException When something goes wrong with the HTTP call
+     * @param callable $callable
+     * @return Response When something goes wrong with the HTTP call
      *
-     * @return Response The HTTP response containing headers / body ready for validation / parsing
      */
-    private function performRPCRequest($method, array $params)
+    protected function performRPCRequest($method, array $arguments, callable $callable = null)
     {
-        $client = $this->client;
-        $request = new Request();
+        /** @var Client $client */
+        /** @var LibEventReactor|NativeReactor $reactor */
+        list ($reactor, $client) = $this->clientFactory->build();
+        $request = clone $this->request;
 
-        if (empty($this->sessionCookie)) {
+        /** Callback for response data from client **/
+        $onResponse = function(Response $response) use ($reactor, $method, $callable) {
+
+            $isJson = function() use ($response) {
+                json_decode($response->getBody());
+                return (json_last_error() === JSON_ERROR_NONE);
+            };
+
+            if ($response->getStatus() !== 200 || !$isJson())
+            {
+                $reactor->stop();
+
+                throw new HTTPException(sprintf(
+                    'Did not get back a JSON response body, got "%s" instead',
+                    $method, print_r($response->getBody(), true)
+                ));
+            }
+
+            $reactor->stop();
+
+            if ($callable != null) {
+                $callable($response->getBody());
+            }
+
+        };
+
+        /** Callback on error for either auth response or response **/
+        $onError = function(\Exception $e) use($reactor) {
+
+            $reactor->stop();
+
+            throw new HTTPException("Something went wrong..." . $e->getMessage());
+        };
+
+        /** Callback when auth response is returned **/
+        $onAuthResponse = function(Response $response, Request $request) use ($reactor, $client, $onResponse, $onError, $method, $arguments) {
+
+            /*            if (!$response->hasHeader('Set-Cookie'))
+                        {
+                            $reactor->stop();
+
+                            throw new HTTPException("Response from torrent client did not return an Set-Cookie header");
+                        }
+
+                        $response = $response->getHeader('Set-Cookie');*/
+
+            //preg_match_all('#_session_id=(.*?);#', $response[0], $matches);
+            //$cookie = isset($matches[0][0]) ? $matches[0][0]: '';
+
+            $request = clone $request;
+            $request->setMethod('POST');
+            //$request->setHeader('Cookie', array($cookie));
+            $request->setBody(json_encode(array(
+                'method' => $method,
+                'params' => $arguments,
+                'id'     => rand()
+            )));
+
+            try {
+                $promise = $client->request($request);
+                $response = \Amp\wait($promise);
+
+                $onResponse($response);
+            } catch (\Exception $e) {
+                $onError($e);
+            }
+        };
+
+        /** Let's do this **/
+        $reactor->immediately(function() use ($reactor, $client, $request, $onAuthResponse, $onError) {
+
             $request->setUri(sprintf('%s:%s/json', $this->connectionArgs['host'], $this->connectionArgs['port']));
             $request->setMethod('POST');
             $request->setAllHeaders(array(
-                'Content-Type' => 'application/json; charset=utf-8'
+                'Content-Type'  => 'application/json; charset=utf-8'
             ));
             $request->setBody(json_encode(array(
                 'method' => self::METHOD_AUTH,
                 'params' => array(
                     $this->connectionArgs['password']
                 ),
-                'id' => rand()
+                'id'     => rand()
             )));
 
-            $promise = $client->request($request);
+            try {
+                $promise = $client->request($request);
+                $response = \Amp\wait($promise);
 
-            /** @var Amp\Artax\Response $response */
-            $response = Amp\wait($promise);
-
-            if ($response->hasHeader('Set-Cookie')) {
-                $cookieHeader = $response->getHeader('Set-Cookie');
-
-                preg_match_all('/_session_id=(.*?);/', $cookieHeader[0], $matches);
-                $this->sessionCookie = isset($matches[0][0]) ? $matches[0][0] : '';
+                $onAuthResponse($response, $request);
+            } catch (\Exception $e) {
+                $onError($e);
             }
-            else
-            {
-                throw new HTTPException("Response from torrent client did not return a Set-Cookie header");
-            }
-        }
 
-        $request = new Request();
-        $request->setUri(sprintf('%s:%s/json', $this->connectionArgs['host'], $this->connectionArgs['port']));
+        });
 
-        $request->setMethod('POST');
-        $request->setAllHeaders(array(
-            'Content-Type'  => 'application/json; charset=utf-8',
-            'Cookie' => $this->sessionCookie
-        ));
-
-        $body = array(
-            'method' => $method,
-            'params' => $params,
-            'id'     => rand()
-        );
-
-        $request->setBody(json_encode($body));
-
-        $promise = $client->request($request);
-
-        /** @var Amp\Artax\Response $response */
-        $response = Amp\wait($promise);
-
-        if ($response->getStatus() === 200)
-        {
-            $body = $response->getBody();
-
-            $isJson = function() use ($body) {
-                json_decode($body);
-                return (json_last_error() === JSON_ERROR_NONE);
-            };
-
-            if ($isJson())
-            {
-                return $response;
-            }
-            else
-            {
-                throw new HTTPException(sprintf(
-                    '"%s" did not get back a JSON response body, got "%s" instead',
-                    $method, print_r($response->getBody(), true)
-                ));
-            }
-        }
-        else
-        {
-            throw new HTTPException(sprintf(
-                '"%s" expected 200 response, got "%s" instead, reason: "%s"',
-                $method, $response->getStatus(), $response->getReason()
-            ));
-        }
+        $reactor->run();
     }
 }
