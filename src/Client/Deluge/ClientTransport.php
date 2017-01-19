@@ -340,7 +340,7 @@ class ClientTransport implements ClientTransportInterface
         /** Callback on error for either auth response or response **/
         $onError = function(\Exception $e) {
 
-            throw new HTTPException("Something went wrong..." . $e->getMessage());
+            throw new HTTPException($e->getMessage(), null, $e);
         };
 
         /** Callback when auth response is returned **/
