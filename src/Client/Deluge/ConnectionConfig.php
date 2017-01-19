@@ -19,8 +19,6 @@ class ConnectionConfig
      */
     private $port;
 
-    private $username;
-
     /**
      * @var string Authentication password
      */
@@ -37,7 +35,7 @@ class ConnectionConfig
      */
     public function __construct(array $arguments)
     {
-        $required = array('host', 'port', 'username', 'password');
+        $required = array('host', 'port', 'password');
 
         if (count(array_intersect_key(array_flip($required), $arguments)) === count($required))
         {
@@ -49,7 +47,6 @@ class ConnectionConfig
 
             $this->host = $host;
             $this->port = $arguments['port'];
-            $this->username = $arguments['username'];
             $this->password = $arguments['password'];
         }
         else
@@ -69,7 +66,6 @@ class ConnectionConfig
         return array(
             'host' => $this->host,
             'port' => $this->port,
-            'username' => $this->username,
             'password' => $this->password
         );
     }

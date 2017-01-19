@@ -311,6 +311,7 @@ class ClientTransport implements ClientTransportInterface
     {
         /** @var Client $client */
         $client = $this->client;
+
         $request = new Request();
 
         /** Callback for response data from client **/
@@ -367,7 +368,7 @@ class ClientTransport implements ClientTransportInterface
         $request->setUri(sprintf('%s:%s/json', $this->connectionArgs['host'], $this->connectionArgs['port']));
         $request->setMethod('POST');
         $request->setAllHeaders(array(
-            'Content-Type'  => 'application/json; charset=utf-8'
+            'Content-Type'  => 'application/json; charset=utf-8',
         ));
         $request->setBody(json_encode(array(
             'method' => self::METHOD_AUTH,
