@@ -311,8 +311,10 @@ class ClientTransport implements ClientTransportInterface
     {
         /** @var Client $client */
         /** @var LibEventReactor|NativeReactor $reactor */
-        list ($reactor, $client) = $this->clientFactory->build();
-        $request = clone $this->request;
+        $client = $this->client;
+        $reactor = Amp\reactor();
+
+        $request = new Request();
 
         /** Callback for response data from client **/
         $onResponse = function(Response $response) use ($reactor, $method, $callable) {
