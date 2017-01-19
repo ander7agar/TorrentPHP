@@ -113,21 +113,21 @@ class AsyncClientTransport extends ClientTransport
         /** Callback when auth response is returned **/
         $onAuthResponse = function(Response $response, Request $request) use ($reactor, $client, $onResponse, $onError, $method, $arguments) {
 
-            if (!$response->hasHeader('Set-Cookie'))
+/*            if (!$response->hasHeader('Set-Cookie'))
             {
                 $reactor->stop();
 
                 throw new HTTPException("Response from torrent client did not return an Set-Cookie header");
             }
 
-            $response = $response->getHeader('Set-Cookie');
+            $response = $response->getHeader('Set-Cookie');*/
 
-            preg_match_all('#_session_id=(.*?);#', $response[0], $matches);
-            $cookie = isset($matches[0][0]) ? $matches[0][0]: '';
+            //preg_match_all('#_session_id=(.*?);#', $response[0], $matches);
+            //$cookie = isset($matches[0][0]) ? $matches[0][0]: '';
 
             $request = clone $request;
             $request->setMethod('POST');
-            $request->setHeader('Cookie', array($cookie));
+            //$request->setHeader('Cookie', array($cookie));
             $request->setBody(json_encode(array(
                 'method' => $method,
                 'params' => $arguments,
