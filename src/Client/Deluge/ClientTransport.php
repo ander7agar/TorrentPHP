@@ -346,9 +346,14 @@ class ClientTransport implements ClientTransportInterface
         /** Callback when auth response is returned **/
         $onAuthResponse = function(Response $response, Request $request) use ($client, $onResponse, $onError, $method, $arguments) {
 
+            if (!$response->hasHeader('Set-Cookie')) {
+                throw new HttpException('Set-Cookie Header no present');
+            }
+
+            $cookie = $response->getHeader('Set-Cookie');
             $request = clone $request;
             $request->setMethod('POST');
-            //$request->setHeader('Cookie', array($cookie));
+            $request->setHeader('Cookie', array($cookie));
             $request->setBody(json_encode(array(
                 'method' => $method,
                 'params' => $arguments,
@@ -369,6 +374,7 @@ class ClientTransport implements ClientTransportInterface
         $request->setMethod('POST');
         $request->setAllHeaders(array(
             'Content-Type'  => 'application/json; charset=utf-8',
+            'Cookie' => 'remember_select_exclude=[]; remember_select_notify=[]'
         ));
         $request->setBody(json_encode(array(
             'method' => self::METHOD_AUTH,
