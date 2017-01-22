@@ -444,4 +444,9 @@ class Torrent
     {
         return (($this->status === self::STATUS_COMPLETE) || ($this->percentDone === 100) || ($this->bytesDownloaded === $this->size));
     }
+
+    public static function build($hashString, $name, $size)
+    {
+        return new Torrent($hashString, $name, $size);
+    }
 }

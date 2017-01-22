@@ -25,27 +25,13 @@ abstract class ClientAdapter
     protected $transport;
 
     /**
-     * @var TorrentFactory
-     */
-    protected $torrentFactory;
-
-    /**
-     * @var FileFactory
-     */
-    protected $fileFactory;
-
-    /**
      * @constructor
      *
      * @param ClientTransport $transport
-     * @param TorrentFactory  $torrentFactory
-     * @param FileFactory     $fileFactory
      */
-    public function __construct(ClientTransport $transport, TorrentFactory $torrentFactory, FileFactory $fileFactory)
+    public function __construct(ClientTransport $transport)
     {
         $this->transport = $transport;
-        $this->torrentFactory = $torrentFactory;
-        $this->fileFactory = $fileFactory;
     }
 
     /**

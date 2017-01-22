@@ -63,4 +63,9 @@ class File
     {
         return $this->size;
     }
+
+    public static function build($name, $sizeInBytes)
+    {
+        return new File($name, $sizeInBytes);
+    }
 } 

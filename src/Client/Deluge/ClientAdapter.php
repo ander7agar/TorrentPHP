@@ -3,6 +3,7 @@
 namespace TorrentPHP\Client\Deluge;
 
 use TorrentPHP\ClientAdapter as BaseClientAdapter;
+use TorrentPHP\File;
 use TorrentPHP\Torrent;
 
 /**
@@ -50,7 +51,7 @@ class ClientAdapter extends BaseClientAdapter
 
         foreach ($data['result'] as $array)
         {
-            $torrent = $this->torrentFactory->build($array['hash'], $array['name'], $array['total_wanted']);
+            $torrent = Torrent::build($array['hash'], $array['name'], $array['total_wanted']);
 
             $torrent->setDownloadSpeed($array['download_payload_rate']);
             $torrent->setUploadSpeed($array['upload_payload_rate']);
@@ -62,7 +63,7 @@ class ClientAdapter extends BaseClientAdapter
 
             foreach ($array['files'] as $fileData)
             {
-                $file = $this->fileFactory->build($fileData['path'], $fileData['size']);
+                $file = File::build($fileData['path'], $fileData['size']);
 
                 $torrent->addFile($file);
             }
