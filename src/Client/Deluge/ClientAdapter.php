@@ -17,7 +17,7 @@ class ClientAdapter extends BaseClientAdapter
      */
     public function addTorrent($path)
     {
-        $data = json_decode($this->transport->addTorrent($path));
+        $data = $this->transport->addTorrent($path);
 
         $torrentHash = $data->result;
 
@@ -125,7 +125,7 @@ class ClientAdapter extends BaseClientAdapter
      */
     public function deleteTorrent(Torrent $torrent = null, $torrentId = null)
     {
-        $data = json_decode($this->transport->deleteTorrent($torrent, $torrentId));
+        $data = $this->transport->deleteTorrent($torrent, $torrentId);
 
         return $data->result;
     }

@@ -4,6 +4,7 @@ namespace TorrentPHP\Client\Deluge;
 
 use Amp\LibeventReactor;
 use Amp\NativeReactor;
+use TorrentPHP\Client\CurlClient;
 use TorrentPHP\ClientTransport as ClientTransportInterface;
 use Amp\Artax\ClientException as HTTPException;
 use TorrentPHP\ClientException;
@@ -73,11 +74,6 @@ class ClientTransport implements ClientTransportInterface
     const METHOD_SET_LABEL = 'label.set_torrent';
 
     /**
-     * @var Client
-     */
-    protected $client;
-
-    /**
      * @var array Connection arguments
      */
     protected $connectionArgs;
@@ -87,14 +83,11 @@ class ClientTransport implements ClientTransportInterface
     /**
      * @constructor
      *
-     * @param Client                       $client  Amp\Artax HTTP Client
-     * @param Request                      $request Empty Request object
      * @param ConnectionConfig             $config  Configuration object used to connect over rpc
      */
-    public function __construct(Client $client, ConnectionConfig $config)
+    public function __construct(ConnectionConfig $config)
     {
         $this->connectionArgs = $config->getArgs();
-        $this->client = $client;
     }
 
     public function getSessionState() {
@@ -309,32 +302,17 @@ class ClientTransport implements ClientTransportInterface
      */
     protected function performRPCRequest($method, array $arguments, callable $callable = null)
     {
-        /** @var Client $client */
-        $client = $this->client;
-
-        $request = new Request();
 
         /** Callback for response data from client **/
-        $onResponse = function(Response $response) use ($method, $callable) {
+        $onResponse = function($response) use ($method, $callable) {
 
-            $isJson = function() use ($response) {
-                json_decode($response->getBody());
-                return (json_last_error() === JSON_ERROR_NONE);
-            };
-
-            if ($response->getStatus() !== 200 || !$isJson())
-            {
-
-                throw new HTTPException(sprintf(
-                    'Did not get back a JSON response body, got "%s" instead',
-                    $method, print_r($response->getBody(), true)
-                ));
-            }
+            $response = json_decode($response);
 
             if ($callable != null) {
-                $callable($response->getBody());
+                $callable($response);
             }
 
+            return $response;
         };
 
         /** Callback on error for either auth response or response **/
@@ -343,26 +321,19 @@ class ClientTransport implements ClientTransportInterface
             throw new HTTPException($e->getMessage(), null, $e);
         };
 
-        /** Callback when auth response is returned **/
-        $onAuthResponse = function(Response $response, Request $request) use ($client, $onResponse, $onError, $method, $arguments) {
+        /**
+         * @param $cookie
+         */
+        $onAuthResponse = function($cookie) use ($onResponse, $onError, $method, $arguments) {
 
-            if (!$response->hasHeader('Set-Cookie')) {
-                throw new HttpException('Set-Cookie Header no present');
-            }
-
-            $cookie = $response->getHeader('Set-Cookie');
-            $request = clone $request;
-            $request->setMethod('POST');
-            $request->setHeader('Cookie', array($cookie));
-            $request->setBody(json_encode(array(
-                'method' => $method,
-                'params' => $arguments,
-                'id'     => rand()
-            )));
+            $client = $this->getClient();
+            $client->addHeader('Cookie:' . $cookie);
+            $client->addParameter('method', $method);
+            $client->addParameter('params', $arguments);
+            $client->addParameter('id', rand());
 
             try {
-                $promise = $client->request($request);
-                $response = \Amp\wait($promise);
+                $response = $client->execute();
 
                 $onResponse($response);
             } catch (\Exception $e) {
@@ -370,27 +341,37 @@ class ClientTransport implements ClientTransportInterface
             }
         };
 
-        $request->setUri(sprintf('%s:%s/json', $this->connectionArgs['host'], $this->connectionArgs['port']));
-        $request->setMethod('POST');
-        $request->setAllHeaders(array(
-            'Content-Type'  => 'application/json; charset=utf-8',
-            'Cookie' => 'remember_select_exclude=[]; remember_select_notify=[]'
-        ));
-        $request->setBody(json_encode(array(
-            'method' => self::METHOD_AUTH,
-            'params' => array(
-                $this->connectionArgs['password']
-            ),
-            'id'     => rand()
-        )));
+        $client = $this->getClient();
+        $client->addHeader('Cookie: remember_select_exclude=[]; remember_select_notify=[]');
+        $client->addParameter('method', 'auth.login');
+        $client->addParameter('params', array($this->connectionArgs['password']));
+        $client->addParameter('id', rand());
 
         try {
-            $promise = $client->request($request);
-            $response = \Amp\wait($promise);
+            $response = $client->execute();
+            $headers = $client->getResponseHeaders();
 
-            $onAuthResponse($response, $request);
+
+            if (!array_key_exists('Set-Cookie', $headers)) {
+                throw new HttpException('Set-Cookie Header no present');
+            }
+
+            $onAuthResponse($headers['Set-Cookie']);
         } catch (\Exception $e) {
             $onError($e);
         }
+    }
+
+    /**
+     * @return CurlClient
+     */
+    private function getClient() {
+        $client = new CurlClient(sprintf('%s:%s/json', $this->connectionArgs['host'], $this->connectionArgs['port']));
+        $client->setReturn(true);
+        $client->setEncoding(true);
+        $client->setMethod('POST');
+        $client->addHeader('Content-Type: application/json');
+
+        return $client;
     }
 }

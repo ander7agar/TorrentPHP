@@ -29,7 +29,7 @@ class ResponseBody
 
     public function __construct($body)
     {
-        $json = json_decode($body);
+        $json = $body;
 
         $this->id = $json->id;
         $this->result = $json->result;
