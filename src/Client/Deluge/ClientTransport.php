@@ -325,11 +325,11 @@ class ClientTransport implements ClientTransportInterface
 
             try {
                 $url = sprintf('%s:%s/json', $this->connectionArgs['host'], $this->connectionArgs['port']);
-                $client->post($url, array(
+                $client->post($url,json_encode(array(
                     'method' => $method,
                     'params' => $arguments,
                     'id' => rand()
-                ));
+                )));
 
                 $response = $client->response;
 
