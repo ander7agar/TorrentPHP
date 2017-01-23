@@ -331,6 +331,8 @@ class ClientTransport implements ClientTransportInterface
                     'id' => rand()
                 )));
 
+                $client->close();
+
                 $response = $client->response;
 
                 return $onResponse($response);
@@ -350,6 +352,8 @@ class ClientTransport implements ClientTransportInterface
                 'params' => array($this->connectionArgs['password']),
                 'id' => rand()
             )));
+
+            $client->close();
 
             $headers = $client->response_headers;
 
