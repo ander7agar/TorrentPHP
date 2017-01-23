@@ -320,7 +320,8 @@ class ClientTransport implements ClientTransportInterface
         $onAuthResponse = function($cookie) use ($onResponse, $onError, $method, $arguments) {
 
             $client = $this->getClient();
-            $client->setCookie('Cookie', $this->extractCookie($cookie));
+            $cookie = $this->extractCookie($cookie);
+            $client->setCookie('_session_id', $cookie);
 
             try {
                 $url = sprintf('%s:%s/json', $this->connectionArgs['host'], $this->connectionArgs['port']);
@@ -395,7 +396,7 @@ class ClientTransport implements ClientTransportInterface
      */
     private function extractCookie($cookie) {
         $data = explode('; ', $cookie);
-        return $data[0];
+        return explode("=", $data[0])[1];
     }
 
     /**
