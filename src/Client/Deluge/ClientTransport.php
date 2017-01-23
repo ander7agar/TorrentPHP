@@ -374,12 +374,20 @@ class ClientTransport implements ClientTransportInterface
      */
     private function parseHeaders($headers) {
 
-        for ($x = 1; $x < count($headers); $x++) {
-            $pair = explode(': ', $headers[$x]);
-            $headers[$pair[0]] = $pair[1];
+        $skippedCode = false;
+        $headersValues = array();
+        foreach ($headers as $h) {
+            if (!$skippedCode) {
+                $skippedCode = true;
+                continue;
+            }
+
+            $pair = explode(': ', $h);
+            $headersValues[$pair[0]] = $pair[1];
+
         }
 
-        return $headers;
+        return $headersValues;
     }
 
     /**
