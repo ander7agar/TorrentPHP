@@ -321,7 +321,7 @@ class ClientTransport implements ClientTransportInterface
         $onAuthResponse = function($cookie) use ($onResponse, $onError, $method, $arguments) {
 
             $client = $this->getClient();
-            $client->setHeader('Cookie:', $cookie);
+            $client->setCookie('Cookie:', $cookie);
 
             try {
                 $url = sprintf('%s:%s/json', $this->connectionArgs['host'], $this->connectionArgs['port']);
@@ -340,7 +340,8 @@ class ClientTransport implements ClientTransportInterface
         };
 
         $client = $this->getClient();
-        $client->setHeader('Cookie', 'remember_select_exclude=[]; remember_select_notify=[]');
+
+        $client->setCookie('Cookie', 'remember_select_exclude=[]; remember_select_notify=[]');
 
         try {
             $url = sprintf('%s:%s/json', $this->connectionArgs['host'], $this->connectionArgs['port']);
