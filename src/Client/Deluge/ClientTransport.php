@@ -355,9 +355,7 @@ class ClientTransport implements ClientTransportInterface
 
             $client->close();
 
-            $headers = $client->response_headers;
-            var_dump($headers);
-            error_log(print_r($headers, true));
+            $headers = $this->parseHeaders($client->response_headers);
 
 
             if (!array_key_exists('Set-Cookie', $headers)) {
@@ -368,6 +366,20 @@ class ClientTransport implements ClientTransportInterface
         } catch (\Exception $e) {
             $onError($e);
         }
+    }
+
+    /**
+     * @param array $headers
+     * @return array
+     */
+    private function parseHeaders($headers) {
+
+        for ($x = 0; $x < count($headers); $x++) {
+            $pair = explode(': ', $headers[$x]);
+            $headers[$pair[0]] = $pair[1];
+        }
+
+        return $headers;
     }
 
     /**
