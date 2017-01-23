@@ -2,17 +2,12 @@
 
 namespace TorrentPHP\Client\Deluge;
 
-use Amp\LibeventReactor;
-use Amp\NativeReactor;
+use Curl\Curl;
+use Exception;
 use TorrentPHP\Client\CurlClient;
 use TorrentPHP\ClientTransport as ClientTransportInterface;
-use Amp\Artax\ClientException as HTTPException;
 use TorrentPHP\ClientException;
 use TorrentPHP\Torrent;
-use Amp\Artax\Response;
-use Amp\Artax\Request;
-use Amp\Artax\Client;
-use Amp;
 
 /**
  * Class ClientTransport
@@ -282,29 +277,27 @@ class ClientTransport implements ClientTransportInterface
     private function tryRPCRequest($method, $params, callable $callable = null) {
         try
         {
-            return new ResponseBody($this->performRPCRequest($method, $params, $callable)->getBody());
+            return new ResponseBody($this->performRPCRequest($method, $params, $callable));
         }
-        catch(HTTPException $e)
+        catch(Exception $e)
         {
             throw new ClientException($e->getMessage(), null, $e);
         }
     }
 
     /**
-     * Helper method to facilitate json rpc requests using the Amp\Artax client
-     *
-     * @param string $method The rpc method to call
-     * @param array $arguments Associative array of rpc method arguments to send in the header (not auth arguments)
-     *
-     * @param callable $callable
-     * @return Response When something goes wrong with the HTTP call
-     *
+     * @param $method
+     * @param array $arguments
+     * @param callable|null $callable
      */
     protected function performRPCRequest($method, array $arguments, callable $callable = null)
     {
 
-        /** Callback for response data from client **/
-        $onResponse = function($response) use ($method, $callable) {
+        /**
+         * @param $response
+         * @return array
+         */
+        $onResponse = function($response) use ($callable) {
 
             $response = json_decode($response);
 
@@ -318,60 +311,65 @@ class ClientTransport implements ClientTransportInterface
         /** Callback on error for either auth response or response **/
         $onError = function(\Exception $e) {
 
-            throw new HTTPException($e->getMessage(), null, $e);
+            throw new ClientException($e->getMessage(), null, $e);
         };
 
         /**
          * @param $cookie
+         * @return array
          */
         $onAuthResponse = function($cookie) use ($onResponse, $onError, $method, $arguments) {
 
             $client = $this->getClient();
-            $client->addHeader('Cookie:' . $cookie);
-            $client->addParameter('method', $method);
-            $client->addParameter('params', $arguments);
-            $client->addParameter('id', rand());
+            $client->setHeader('Cookie:', $cookie);
 
             try {
-                $response = $client->execute();
+                $url = sprintf('%s:%s/json', $this->connectionArgs['host'], $this->connectionArgs['port']);
+                $client->post($url, array(
+                    'method' => $method,
+                    'params' => $arguments,
+                    'id' => rand()
+                ));
 
-                $onResponse($response);
+                $response = $client->response;
+
+                return $onResponse($response);
             } catch (\Exception $e) {
                 $onError($e);
             }
         };
 
         $client = $this->getClient();
-        $client->addHeader('Cookie: remember_select_exclude=[]; remember_select_notify=[]');
-        $client->addParameter('method', 'auth.login');
-        $client->addParameter('params', array($this->connectionArgs['password']));
-        $client->addParameter('id', rand());
+        $client->setHeader('Cookie', 'remember_select_exclude=[]; remember_select_notify=[]');
 
         try {
-            $response = $client->execute();
-            $headers = $client->getResponseHeaders();
+            $url = sprintf('%s:%s/json', $this->connectionArgs['host'], $this->connectionArgs['port']);
+            $client->post($url, array(
+                'method' => 'auth.login',
+                'params' => array($this->connectionArgs['password']),
+                'id' => rand()
+            ));
+
+            $headers = $client->response_headers;
 
 
             if (!array_key_exists('Set-Cookie', $headers)) {
-                throw new HttpException('Set-Cookie Header no present');
+                throw new ClientException('Set-Cookie Header no present');
             }
 
-            $onAuthResponse($headers['Set-Cookie']);
+            return $onAuthResponse($headers['Set-Cookie']);
         } catch (\Exception $e) {
             $onError($e);
         }
     }
 
     /**
-     * @return CurlClient
+     * @return Curl
      */
     private function getClient() {
-        $client = new CurlClient(sprintf('%s:%s/json', $this->connectionArgs['host'], $this->connectionArgs['port']));
-        $client->setReturn(true);
-        $client->setEncoding(true);
-        $client->setMethod('POST');
-        $client->addHeader('Content-Type: application/json');
-
-        return $client;
+        $curl = new Curl();
+        $curl->setHeader('Content-Type', 'application/json');
+        $curl->setOpt(CURLOPT_RETURNTRANSFER, true);
+        return $curl;
     }
 }
