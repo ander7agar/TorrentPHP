@@ -22,7 +22,7 @@ class ClientAdapter extends BaseClientAdapter
 
         $torrentHash = $data->result;
 
-        $torrents = $this->getTorrents($torrentHash);
+        $torrents = $this->getTorrents(array($torrentHash));
 
         return $torrents[0];
     }
@@ -32,7 +32,7 @@ class ClientAdapter extends BaseClientAdapter
      */
     public function getTorrents(array $ids = array())
     {
-        $response = $this->transport->getTorrents($ids);
+        $response = $this->transport->getTorrents(array($ids));
         if (is_object($response)) {
             $data = $this->object_to_array($response);
         } else {
@@ -102,7 +102,7 @@ class ClientAdapter extends BaseClientAdapter
 
         $torrentHash = (!is_null($torrent)) ? $torrent->getHashString() : $torrentId;
 
-        $torrents = $this->getTorrents($torrentHash);
+        $torrents = $this->getTorrents(array($torrentHash));
 
         return $torrents[0];
     }
@@ -116,7 +116,7 @@ class ClientAdapter extends BaseClientAdapter
 
         $torrentHash = (!is_null($torrent)) ? $torrent->getHashString() : $torrentId;
 
-        $torrents = $this->getTorrents($torrentHash);
+        $torrents = $this->getTorrents(array($torrentHash));
 
         return $torrents[0];
     }
