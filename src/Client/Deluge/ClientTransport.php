@@ -4,7 +4,6 @@ namespace TorrentPHP\Client\Deluge;
 
 use Curl\Curl;
 use Exception;
-use TorrentPHP\Client\CurlClient;
 use TorrentPHP\ClientTransport as ClientTransportInterface;
 use TorrentPHP\ClientException;
 use TorrentPHP\Torrent;
