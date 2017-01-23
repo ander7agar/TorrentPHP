@@ -321,7 +321,7 @@ class ClientTransport implements ClientTransportInterface
         $onAuthResponse = function($cookie) use ($onResponse, $onError, $method, $arguments) {
 
             $client = $this->getClient();
-            $client->setCookie('Cookie:', $cookie);
+            $client->setCookie('Cookie', $cookie);
 
             try {
                 $url = sprintf('%s:%s/json', $this->connectionArgs['host'], $this->connectionArgs['port']);
@@ -371,6 +371,7 @@ class ClientTransport implements ClientTransportInterface
         $curl = new Curl();
         $curl->setHeader('Content-Type', 'application/json');
         $curl->setOpt(CURLOPT_RETURNTRANSFER, true);
+        $curl->setOpt(CURLOPT_ENCODING, true);
         return $curl;
     }
 }
