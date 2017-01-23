@@ -356,6 +356,7 @@ class ClientTransport implements ClientTransportInterface
             $client->close();
 
             $headers = $client->response_headers;
+            var_dump($headers);
 
 
             if (!array_key_exists('Set-Cookie', $headers)) {
