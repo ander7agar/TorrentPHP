@@ -25,7 +25,6 @@ Provides a simple-to-use object oriented interface for interacting with torrent 
 
 Currently supported clients *(with remote capabilities enabled)*:
 
-- Transmission 
 - Deluge
 
 Installation
