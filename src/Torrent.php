@@ -109,7 +109,19 @@ class Torrent
     {
         $this->name = $name;
         $this->hashString = $hashString;
-        $this->setSize($sizeInBytes);
+
+        if (is_numeric($sizeInBytes) && $sizeInBytes > -1)
+        {
+            $this->size = $sizeInBytes;
+        }
+        else
+        {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Invalid torrent size provided. Size should be bigger than "-1" but "%s" given', $sizeInBytes ?: 'null'
+                )
+            );
+        }
     }
 
     /**
@@ -140,30 +152,6 @@ class Torrent
     public function getSize()
     {
         return $this->size;
-    }
-
-    /**
-     * Set the torrent size in bytes
-     *
-     * @param int $bytes The size of the torrent in bytes
-     *
-     * @throws \InvalidArgumentException When an invalid size given
-     */
-    public function setSize($bytes)
-    {
-
-        if (is_numeric($bytes) && $bytes > -1)
-        {
-            $this->size = $bytes;
-        }
-        else
-        {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Invalid torrent size provided. Size should be bigger than "-1" but "%s" given', $bytes ?: 'null'
-                )
-            );
-        }
     }
 
     /**
