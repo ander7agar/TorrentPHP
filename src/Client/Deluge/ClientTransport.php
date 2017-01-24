@@ -30,6 +30,8 @@ class ClientTransport implements ClientTransportInterface
      */
     const METHOD_GET_ALL = 'core.get_torrents_status';
 
+    const METHOD_GET_TORRENT = 'core.get_torrent_status';
+
     /**
      * Get all the data!
      */
@@ -88,6 +90,22 @@ class ClientTransport implements ClientTransportInterface
         $method = self::GET_SESSION_STATE;
 
         $params = array();
+
+        return $this->tryRPCRequest($method, $params);
+    }
+
+    public function getTorrent($id) {
+        $method = self::METHOD_GET_TORRENT;
+
+        $params = array(
+            /** Torrent ID if provided - null returns all torrents **/
+            $id,
+            /** Return Keys **/
+            array(
+                'name', 'state', 'files', 'eta', 'hash', 'download_payload_rate', 'status',
+                'upload_payload_rate', 'total_wanted', 'total_uploaded', 'total_done', 'error_code', 'label'
+            )
+        );
 
         return $this->tryRPCRequest($method, $params);
     }

@@ -13,8 +13,10 @@ use TorrentPHP\Torrent;
  */
 class ClientAdapter extends BaseClientAdapter
 {
+
     /**
-     * @see ClientTransport::addTorrent()
+     * @param string $path
+     * @return Torrent
      */
     public function addTorrent($path)
     {
@@ -22,9 +24,45 @@ class ClientAdapter extends BaseClientAdapter
 
         $torrentHash = $data->result;
 
-        $torrents = $this->getTorrents(array($torrentHash));
+        return $this->getTorrent($torrentHash);
+    }
 
-        return $torrents[0];
+    /**
+     * @param $id
+     * @return Torrent
+     */
+    public function getTorrent($id) {
+        $response = $this->transport->getTorrent($id);
+        if (is_object($response)) {
+            $data = $this->object_to_array($response);
+        } else {
+            $data = json_decode($response, true);
+        }
+
+        $array = $data['result'];
+
+        $torrent = Torrent::build($array['hash'], $array['name'], $array['total_wanted']);
+
+        $torrent->setDownloadSpeed($array['download_payload_rate']);
+        $torrent->setUploadSpeed($array['upload_payload_rate']);
+
+        /** Deluge doesn't have a per-torrent error string **/
+        $torrent->setErrorString((is_null($data['error']) ? "" : print_r($data['error'], true)));
+
+        $torrent->setStatus($array['state']);
+
+        foreach ($array['files'] as $fileData)
+        {
+            $file = File::build($fileData['path'], $fileData['size']);
+
+            $torrent->addFile($file);
+        }
+
+        $torrent->setBytesDownloaded($array['total_done']);
+        $torrent->setBytesUploaded($array['total_uploaded']);
+
+        return $torrent;
+
     }
 
     /**

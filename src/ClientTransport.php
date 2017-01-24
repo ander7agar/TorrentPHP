@@ -27,6 +27,8 @@ interface ClientTransport
      */
     public function getTorrents(array $ids = array());
 
+    public function getTorrent($id);
+
     /**
      * Add a torrent to the client
      *
