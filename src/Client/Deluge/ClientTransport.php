@@ -95,7 +95,7 @@ class ClientTransport implements ClientTransportInterface
     /**
      * {@inheritdoc}
      */
-    public function getTorrents(array $ids = array(), callable $callable = null)
+    public function getTorrents(array $ids = array())
     {
         $method = self::METHOD_GET_ALL;
 
@@ -109,7 +109,7 @@ class ClientTransport implements ClientTransportInterface
             )
         );
 
-        return $this->tryRPCRequest($method, $params, $callable);
+        return $this->tryRPCRequest($method, $params);
     }
 
     public function getWebUI()
