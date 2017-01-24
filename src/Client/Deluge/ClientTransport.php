@@ -136,7 +136,7 @@ class ClientTransport implements ClientTransportInterface
             /** Torrent Url **/
             $path,
             /** Required array of optional arguments (required and also optional? wtf was the api designer thinking) **/
-            array()
+            array("add_paused" => false)
         );
 
         return $this->tryRPCRequest($method, $params);
