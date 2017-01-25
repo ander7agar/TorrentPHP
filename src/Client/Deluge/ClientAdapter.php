@@ -49,6 +49,7 @@ class ClientAdapter extends BaseClientAdapter
         $torrent->setErrorString((is_null($response->error) ? "" : print_r($response->error, true)));
 
         $torrent->setStatus($array['state']);
+        $torrent->setEta($array['eta']);
 
         foreach ($array['files'] as $fileData)
         {

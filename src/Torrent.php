@@ -300,8 +300,6 @@ class Torrent
             {
                 $this->status = self::STATUS_COMPLETE;
             }
-
-            $this->eta = (int)number_format(($this->size / ($this->downloadSpeed === 0 ? 1 : $this->downloadSpeed)) * 100, 2, '.', '');
         }
         else
         {
@@ -310,6 +308,14 @@ class Torrent
                 $numBytes
             ));
         }
+    }
+
+    /**
+     * @param int $eta
+     */
+    public function setEta($eta)
+    {
+        $this->eta = $eta;
     }
 
     /**
