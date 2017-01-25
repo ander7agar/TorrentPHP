@@ -31,8 +31,8 @@ class ResponseBody
     {
         $json = $body;
 
-        $this->id = $json->id;
-        $this->result = $json->result;
-        $this->error = $json->error;
+        $this->id = $json['id'];
+        $this->result = $json['result'];
+        $this->error = $json['error'];
     }
 }
