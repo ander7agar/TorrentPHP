@@ -117,9 +117,7 @@ class Torrent
         else
         {
             throw new \InvalidArgumentException(
-                sprintf(
-                    'Invalid torrent size provided. Size should be bigger than "-1" but "%s" given', $sizeInBytes ?: 'null'
-                )
+                'Invalid torrent size provided. Size should be bigger than "-1" but ' . $sizeInBytes . 'given'
             );
         }
     }
