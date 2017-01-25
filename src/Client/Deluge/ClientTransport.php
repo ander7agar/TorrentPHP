@@ -321,7 +321,7 @@ class ClientTransport implements ClientTransportInterface
          */
         $onResponse = function($response) use ($callable) {
 
-            $response = json_decode($response);
+            $response = json_decode($response, true);
 
             if ($callable != null) {
                 $callable($response);
