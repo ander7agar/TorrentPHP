@@ -311,6 +311,14 @@ class Torrent
     }
 
     /**
+     * @return float
+     */
+    public function getPercentDone()
+    {
+        return $this->percentDone;
+    }
+
+    /**
      * @param int $eta
      */
     public function setEta($eta)
