@@ -2,37 +2,47 @@
 
 namespace TorrentPHP\Client\Deluge;
 
-use TorrentPHP\ClientAdapter as BaseClientAdapter;
 use TorrentPHP\File;
 use TorrentPHP\Torrent;
+use TorrentPHP\TorrentInfo;
 
 /**
  * Class ClientAdapter
  *
  * @package TorrentPHP\Client\Deluge
  */
-class ClientAdapter extends BaseClientAdapter
-{
+class ClientAdapter extends ClientTransport {
+
+    /**
+     * @param string $url
+     * @return TorrentInfo
+     */
+    public function downloadTorrentFileUrl($url) {
+        $data = $this->downloadTorrentFile($url);
+        $torrentInfo = $this->getTorrentFileInfo($data->result);
+
+        return TorrentInfo::build($torrentInfo->result);
+    }
 
     /**
      * @param string $path
      * @return Torrent
      */
-    public function addTorrent($path)
-    {
-        $data = $this->transport->addTorrent($path);
+    public function addTorrentUrl($path) {
+        $data = $this->addTorrent($path);
 
         $torrentHash = $data->result;
 
-        return $this->getTorrent($torrentHash);
+        return $this->getTorrentInfo($torrentHash);
     }
+
 
     /**
      * @param $id
      * @return Torrent
      */
-    public function getTorrent($id) {
-        $response = $this->transport->getTorrent($id);
+    public function getTorrentInfo($id) {
+        $response = $this->getTorrent($id);
 
         if ($response->result == null) {
             return null;
@@ -66,11 +76,12 @@ class ClientAdapter extends BaseClientAdapter
     }
 
     /**
-     * @see ClientTransport::getTorrents()
+     * @param array $ids
+     * @return array
      */
-    public function getTorrents(array $ids = array())
+    public function getTorrentsInfo(array $ids = array())
     {
-        $response = $this->transport->getTorrents(array($ids));
+        $response = $this->getTorrents(array($ids));
         if (is_object($response)) {
             $data = $this->object_to_array($response);
         } else {
@@ -132,39 +143,41 @@ class ClientAdapter extends BaseClientAdapter
     }
 
     /**
-     * @see ClientTransport::startTorrent()
+     * @param Torrent|null $torrent
+     * @param null $torrentId
+     * @return Torrent
      */
-    public function startTorrent(Torrent $torrent = null, $torrentId = null)
+    public function startTorrentDownload(Torrent $torrent = null, $torrentId = null)
     {
-        $this->transport->startTorrent($torrent, $torrentId);
+        $this->startTorrent($torrent, $torrentId);
 
         $torrentHash = (!is_null($torrent)) ? $torrent->getHashString() : $torrentId;
 
-        $torrents = $this->getTorrents(array($torrentHash));
-
-        return $torrents[0];
+        return $this->getTorrentInfo($torrentHash);
     }
 
     /**
-     * @see ClientTransport::pauseTorrent()
+     * @param Torrent|null $torrent
+     * @param null $torrentId
+     * @return Torrent
      */
-    public function pauseTorrent(Torrent $torrent = null, $torrentId = null)
+    public function pauseTorrentDownload(Torrent $torrent = null, $torrentId = null)
     {
-        $this->transport->pauseTorrent($torrent, $torrentId);
+        $this->pauseTorrent($torrent, $torrentId);
 
         $torrentHash = (!is_null($torrent)) ? $torrent->getHashString() : $torrentId;
 
-        $torrents = $this->getTorrents(array($torrentHash));
-
-        return $torrents[0];
+        return $this->getTorrentInfo($torrentHash);
     }
 
     /**
-     * @see ClientTransport::deleteTorrent()
+     * @param Torrent|null $torrent
+     * @param null $torrentId
+     * @return mixed
      */
-    public function deleteTorrent(Torrent $torrent = null, $torrentId = null)
+    public function deleteTorrentFiles(Torrent $torrent = null, $torrentId = null)
     {
-        $data = $this->transport->deleteTorrent($torrent, $torrentId);
+        $data = $this->deleteTorrent($torrent, $torrentId);
 
         return $data->result;
     }

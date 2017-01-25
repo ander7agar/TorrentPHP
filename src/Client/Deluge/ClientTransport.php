@@ -4,7 +4,6 @@ namespace TorrentPHP\Client\Deluge;
 
 use Curl\Curl;
 use Exception;
-use TorrentPHP\ClientTransport as ClientTransportInterface;
 use TorrentPHP\ClientException;
 use TorrentPHP\Torrent;
 
@@ -16,8 +15,7 @@ use TorrentPHP\Torrent;
  * @see <http://deluge-torrent.org/docs/1.2/modules/core/core.html>
  * @see <http://dev.deluge-torrent.org/ticket/2085#comment:4>
  */
-class ClientTransport implements ClientTransportInterface
-{
+class ClientTransport {
     /**
      * RPC Method to call for authentication
      */
@@ -32,6 +30,9 @@ class ClientTransport implements ClientTransportInterface
 
     const METHOD_GET_TORRENT = 'core.get_torrent_status';
 
+    const METHOD_GET_TORRENT_INFO = 'web.get_torrent_info';
+
+
     /**
      * Get all the data!
      */
@@ -41,6 +42,8 @@ class ClientTransport implements ClientTransportInterface
      * RPC Method to call to add a torrent from a url
      */
     const METHOD_ADD_URL = 'core.add_torrent_url';
+
+    const METHOD_GET_TORRENT_URL = 'web.download_torrent_from_url';
 
     /**
      * RPC Method to call to add a torrent from a magnet url
@@ -95,6 +98,19 @@ class ClientTransport implements ClientTransportInterface
     }
 
     /**
+     * @param string $file
+     * @return ResponseBody
+     * @throws ClientException
+     */
+    public function getTorrentFileInfo($file) {
+        $method = self::METHOD_GET_TORRENT_INFO;
+
+        $params = array($file);
+
+        return $this->tryRPCRequest($method, $params);
+    }
+
+    /**
      * @param $id
      * @return ResponseBody
      * @throws ClientException
@@ -111,6 +127,19 @@ class ClientTransport implements ClientTransportInterface
                 'upload_payload_rate', 'total_wanted', 'total_uploaded', 'total_done', 'error_code', 'label'
             )
         );
+
+        return $this->tryRPCRequest($method, $params);
+    }
+
+    /**
+     * @param string $url
+     * @return ResponseBody
+     * @throws ClientException
+     */
+    public function downloadTorrentFile($url) {
+        $method = self::METHOD_GET_TORRENT_URL;
+
+        $params = array($url);
 
         return $this->tryRPCRequest($method, $params);
     }
