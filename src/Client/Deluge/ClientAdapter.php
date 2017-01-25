@@ -33,13 +33,7 @@ class ClientAdapter extends BaseClientAdapter
      */
     public function getTorrent($id) {
         $response = $this->transport->getTorrent($id);
-        if (is_object($response)) {
-            $data = $this->object_to_array($response);
-        } else {
-            $data = json_decode($response, true);
-        }
-
-        $array = $data['result'];
+        $array = $response->result;
 
         $torrent = Torrent::build($array['hash'], $array['name'], $array['total_wanted']);
 
@@ -47,7 +41,7 @@ class ClientAdapter extends BaseClientAdapter
         $torrent->setUploadSpeed($array['upload_payload_rate']);
 
         /** Deluge doesn't have a per-torrent error string **/
-        $torrent->setErrorString((is_null($data['error']) ? "" : print_r($data['error'], true)));
+        $torrent->setErrorString((is_null($response->error) ? "" : print_r($response->error, true)));
 
         $torrent->setStatus($array['state']);
 

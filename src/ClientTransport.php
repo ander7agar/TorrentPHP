@@ -1,6 +1,7 @@
 <?php
 
 namespace TorrentPHP;
+use TorrentPHP\Client\Deluge\ResponseBody;
 
 /**
  * Interface ClientTransport
@@ -27,6 +28,11 @@ interface ClientTransport
      */
     public function getTorrents(array $ids = array());
 
+    /**
+     * @param $id
+     * @return ResponseBody
+     * @throws ClientException
+     */
     public function getTorrent($id);
 
     /**

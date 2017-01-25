@@ -94,6 +94,11 @@ class ClientTransport implements ClientTransportInterface
         return $this->tryRPCRequest($method, $params);
     }
 
+    /**
+     * @param $id
+     * @return ResponseBody
+     * @throws ClientException
+     */
     public function getTorrent($id) {
         $method = self::METHOD_GET_TORRENT;
 
