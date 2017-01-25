@@ -33,6 +33,11 @@ class ClientAdapter extends BaseClientAdapter
      */
     public function getTorrent($id) {
         $response = $this->transport->getTorrent($id);
+
+        if ($response->result == null) {
+            return null;
+        }
+
         $array = $response->result;
 
         $torrent = Torrent::build($array['hash'], $array['name'], $array['total_wanted']);
