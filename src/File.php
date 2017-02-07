@@ -22,7 +22,6 @@ class File
     private $name = '';
 
     /**
-     * @constructor
      *
      * @param string $name        The name of the file
      * @param int    $sizeInBytes The size of the file
