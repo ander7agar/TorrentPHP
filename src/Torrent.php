@@ -104,8 +104,6 @@ class Torrent
     private $path;
 
     /**
-     * @constructor
-     *
      * @param string $hashString  Uniquely identifiable hash string
      * @param string $name        The name of the torrent
      * @param int    $sizeInBytes The s ize of the torrent in bytes
