@@ -54,6 +54,7 @@ class ClientAdapter extends ClientTransport {
 
         $torrent->setDownloadSpeed($array['download_payload_rate']);
         $torrent->setUploadSpeed($array['upload_payload_rate']);
+        $torrent->setPath($array['save_path']);
 
         /** Deluge doesn't have a per-torrent error string **/
         $torrent->setErrorString((is_null($response->error) ? "" : print_r($response->error, true)));

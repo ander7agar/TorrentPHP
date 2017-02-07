@@ -99,6 +99,11 @@ class Torrent
     private $eta;
 
     /**
+     * @var string
+     */
+    private $path;
+
+    /**
      * @constructor
      *
      * @param string $hashString  Uniquely identifiable hash string
@@ -122,6 +127,21 @@ class Torrent
         }
     }
 
+    /**
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * @param string $path
+     */
+    public function setPath($path)
+    {
+        $this->path = $path;
+    }
     /**
      * Get torrent hash string
      *

@@ -124,7 +124,7 @@ class ClientTransport {
             /** Return Keys **/
             array(
                 'name', 'state', 'files', 'eta', 'hash', 'download_payload_rate', 'status',
-                'upload_payload_rate', 'total_wanted', 'total_uploaded', 'total_done', 'error_code', 'label'
+                'upload_payload_rate', 'total_wanted', 'total_uploaded', 'total_done', 'error_code', 'label', 'save_path'
             )
         );
 
