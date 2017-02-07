@@ -290,8 +290,6 @@ class Torrent
      * @param int $numBytes
      *
      * @throws \InvalidArgumentException When an integer is not provided as the parameter
-     *
-     * @note Also sets the completion percentage, status to complete if 100% and eta
      */
     public function setBytesDownloaded($numBytes)
     {
@@ -360,8 +358,6 @@ class Torrent
      * @param int $numBytes
      *
      * @throws \InvalidArgumentException
-     *
-     * @note Also sets the seed ratio percentage
      */
     public function setBytesUploaded($numBytes)
     {
